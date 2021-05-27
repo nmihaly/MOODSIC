@@ -14,14 +14,37 @@
             <h1>
                 Type in Your Mood
             </h1>
+            <p>Get random song suggestions based on mood or genre</p>
         </div>
 
-        <div class="search-container">
-            <form action="/action_page.php">
-                <input type="text" placeholder="Search.." name="search">
-                <button type="submit"><i class="fa fa-search"></i></button>
-            </form>
+        <form class="radio-group">
+            <label class="radio-inline">
+                <input type="radio" name="type-group" value="mood" 
+                checked>
+                Mood
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="type-group" value="genere" 
+                checked>
+                Genere
+            </label>
+        </form>
+
+        <div class="select-warp">
+            <select id="mood-suggestion" name="mood-suggestion" class="select-type">
+                <option></option>
+            </select>
+
+            <select id="genere-suggestion" class="select-type">
+                <option></option>
+            </select>
         </div>
+
+        <button class="main-button" id="generate">Generate
+        </button>
+
+        <button class="main-button" id="next-song" style="display: inline-block;">Play Next</button>
+        </button>
     </section>
 
     <!--suggested mood section-->

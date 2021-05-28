@@ -1,1 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.body {
+    height: 100%;
+}
+
+.hero {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/hero-bg-1.jpeg");
+    height: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    padding: 0 50px 50px 50px;
+    background-attachment: fixed;
+    background-position: 0%;
+}
+
+.heading-1 {
+    padding: 90px;
+    color: white;
+}
+
+.waves-effect {
+    margin-bottom: 90px;
+}
+
+.video-container {
+    margin: 80px 80px 100px 80px;
+}
 

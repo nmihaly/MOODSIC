@@ -1,12 +1,1 @@
-.hero {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    background-image: url("../images/facebook_profile_image.png");
-    background-size: cover;
-    background-position: center;
-    align-items: flex-start;
-    background-attachment: fixed;
-    background-position: 80%;
-}
 

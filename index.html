@@ -5,110 +5,115 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moodsic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
 <body>
     <!--Hero Section-->
-    <section class="hero">
-        <div class="heading-1">
-            <h1>
+    <section class="container center hero">
+        <div class="row heading-1">
+            <h2>
                 Search for New Music
-            </h1>
+            </h2>
             <p>Get random song suggestions based on mood or genre</p>
         </div>
 
-        <form class="radio-group">
-            <label class="radio-inline">
-                <input type="radio" name="type-group" value="mood" 
-                checked>
-                Mood
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="type-group" value="genere" 
-                checked>
-                Genere
-            </label>
+        <form class="row radio-group">
+            <p class="col s3 m2">
+                <label>
+                  <input class="with-gap" name="group3" type="radio" checked />
+                  <span>Mood</span>
+                </label>
+            </p>
+            <p class="col s3 m2">
+                <label>
+                  <input class="with-gap" name="group3" type="radio" checked />
+                  <span>Genre</span>
+                </label>
+              </p>
         </form>
 
-        <div class="select-warp">
-            <select id="mood-suggestion" name="mood-suggestion" class="select-type">
-                <option></option>
+       
+        <div class="row input-field">
+            <select>
+                <option value="" disabled selected>Choose your option</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
             </select>
-
-            <select id="genere-suggestion" class="select-type">
-                <option></option>
-            </select>
+            <label>Materialize Select</label>
         </div>
 
-        <button class="main-button" id="generate">Generate
-        </button>
+        <div class="row">
+            <a class="waves-effect waves-light btn-small hoverable"><i class="material-icons right"></i>Generate</a>
 
-        <button class="main-button" id="next-song" style="display: inline-block;">Play Next</button>
-        </button>
+            <a class="waves-effect waves-light btn-small hoverable"><i class="material-icons right"></i>Play Next</a>
+        </div>
+
+    </section>
+
+    <!--Random Video Container-->
+    <section class="container">
+        <div class="row video-container">
+            <iframe width="853" height="480" src="//www.youtube.com/embed/Q8TXgCzxEnw?rel=0" frameborder="0" allowfullscreen></iframe>
+        </div>
     </section>
 
     <!--suggested mood section-->
-    <section class="suggested-mood">
+    <section class="container suggested-mood">
         <div class="flex-row">
-            <h2>Suggested Moods</h2>
+            <h4>Generated Suggestions</h4>
         </div>
 
         <!--suggested happy mood container-->
-        <div class="moods">
-            <div class="happy-mood">
-                <h3>Happy</h3>
-            </div>
-            <article id="artist-image">
+        <div class="row moods">
+            <article class="col s4" id="artist-image">
                 <img src="assets/" alt="placeholder">
                 <div class="artist-info">
-                    <h3 class="artist-name">placeholder</h3>
+                    <p class="artist-name">placeholder</p>
                     <p>placeholder placeholder</p>
                 </div>
             </article>
 
-            <article id="artist-image">
+            <article class="col s4" id="artist-image">
                 <img src="assets/" alt="placeholder">
                 <div class="artist-info">
-                    <h3 class="artist-name">placeholder</h3>
+                    <p class="artist-name">placeholder</p>
                     <p>placeholder placeholder</p>
                 </div>
             </article>
 
-            <article id="artist-image">
+            <article class="col s4" id="artist-image">
                 <img src="assets/" alt="placeholder">
                 <div class="artist-info">
-                    <h3 class="artist-name">placeholder</h3>
+                    <p class="artist-name">placeholder</p>
                     <p>placeholder placeholder</p>
                 </div>
             </article>
         </div>
 
        <!--suggested party mood container-->
-       <div class="moods">
-            <div class="party-mood">
-                <h3>Party</h3>
-            </div>
-
-            <article id="artist-image">
+       <div class="row moods">
+            <article class="col s4" id="artist-image">
                 <img src="assets/" alt="placeholder">
                 <div class="artist-info">
-                    <h3 class="artist-name">placeholder</h3>
+                    <p class="artist-name">placeholder</p>
                     <p>placeholder placeholder</p>
                 </div>
             </article>
 
-            <article id="artist-image">
+            <article class="col s4" id="artist-image">
                 <img src="assets/" alt="placeholder">
                 <div class="artist-info">
-                    <h3 class="artist-name">placeholder</h3>
+                    <p class="artist-name">placeholder</p>
                     <p>placeholder placeholder</p>
                 </div>
             </article>
 
-            <article id="artist-image">
+            <article class="col s4" id="artist-image">
                 <img src="assets/" alt="placeholder">
                 <div class="artist-info">
-                    <h3 class="artist-name">placeholder</h3>
+                    <p class="artist-name">placeholder</p>
                     <p>placeholder placeholder</p>
                 </div>
             </article>
@@ -116,11 +121,16 @@
     </section>
 
     <!-- footer -->
-    <footer>
-        <h3>❤️ Made with love by AEN.</h3>
-        <div>
-          &copy; 2021 A.E.N.
+    <footer class="container">
+        <div class="row">
+            <h6 class="col s6">❤️ Made with love by AEN.</h6>
+            <p class="col right-align s6">
+            &copy; 2021 A.E.N.
+            </p>
         </div>
-      </footer>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="./assets/js/style.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ var APIController = (function() {
     
     var clientId = '1ce2babdd7f44a1d86098faf54333881';
     var clientSecret = 'd5613cd75a52445db1f1fc900e62bf73';
+    //var redirectUri: 'http://localhost/8888/callback'
 
     // private methods
     var _getToken = async () => {
@@ -87,4 +88,176 @@ var APIController = (function() {
 })();
 
 
+// UI Module
+var UIController = (function() {
 
+    //object to hold references to html selectors
+    var DOMElements = {
+        selectGenre: '#genre',
+        selectPlaylist: '#select_playlist',
+        buttonSubmit: '#generate',
+        divSongDetail: '#song-detail',
+        hfToken: '#hidden_token',
+        divSonglist: '.song-list'
+    }
+
+    //public methods
+    return {
+
+        //method to get input fields
+        inputField() {
+            return {
+                genre: document.querySelector(DOMElements.selectGenre),
+                playlist: document.querySelector(DOMElements.selectPlaylist),
+                tracks: document.querySelector(DOMElements.divSonglist),
+                submit: document.querySelector(DOMElements.buttonSubmit),
+                songDetail: document.querySelector(DOMElements.divSongDetail)
+            }
+        },
+
+        // need methods to create select list option
+        createGenre(text, value) {
+            var html = `<option value="${value}">${text}</option>`;
+            document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
+        }, 
+
+        createPlaylist(text, value) {
+            var html = `<option value="${value}">${text}</option>`;
+            document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
+        },
+
+        // need method to create a track list group item 
+        createTrack(id, name) {
+            var html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
+            document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
+        },
+
+        // need method to create the song detail
+        createTrackDetail(img, title, artist) {
+
+            var detailDiv = document.querySelector(DOMElements.divSongDetail);
+            // any time user clicks a new song, we need to clear out the song detail div
+            detailDiv.innerHTML = '';
+
+            var html = 
+            `
+            <div class="row col-sm-12 px-0">
+                <img src="${img}" alt="">        
+            </div>
+            <div class="row col-sm-12 px-0">
+                <label for="Genre" class="form-label col-sm-12">${title}:</label>
+            </div>
+            <div class="row col-sm-12 px-0">
+                <label for="artist" class="form-label col-sm-12">By ${artist}:</label>
+            </div> 
+            `;
+
+            detailDiv.insertAdjacentHTML('beforeend', html)
+        },
+
+        resetTrackDetail() {
+            this.inputField().songDetail.innerHTML = '';
+        },
+
+        resetTracks() {
+            this.inputField().tracks.innerHTML = '';
+            this.resetTrackDetail();
+        },
+
+        resetPlaylist() {
+            this.inputField().playlist.innerHTML = '';
+            this.resetTracks();
+        },
+        
+        storeToken(value) {
+            document.querySelector(DOMElements.hfToken).value = value;
+        },
+
+        getStoredToken() {
+            return {
+                token: document.querySelector(DOMElements.hfToken).value
+            }
+        }
+    }
+
+})();
+
+var APPController = (function(UICtrl, APICtrl) {
+
+    // get input field object ref
+    var DOMInputs = UICtrl.inputField();
+
+    // get genres on page load
+    var loadGenres = async () => {
+        //get the token
+        var token = await APICtrl.getToken();           
+        //store the token onto the page
+        UICtrl.storeToken(token);
+        //get the genres
+        var genres = await APICtrl.getGenres(token);
+        //populate our genres select element
+        genres.forEach(element => UICtrl.createGenre(element.name, element.id));
+    }
+
+    // create genre change event listener
+    DOMInputs.genre.addEventListener('change', async () => {
+        //reset the playlist
+        UICtrl.resetPlaylist();
+        //get the token that's stored on the page
+        var token = UICtrl.getStoredToken().token;        
+        // get the genre select field
+        var genreSelect = UICtrl.inputField().genre;       
+        // get the genre id associated with the selected genre
+        var genreId = genreSelect.options[genreSelect.selectedIndex].value;             
+        // ge the playlist based on a genre
+        var playlist = await APICtrl.getPlaylistByGenre(token, genreId);       
+        // create a playlist list item for every playlist returned
+        playlist.forEach(p => UICtrl.createPlaylist(p.name, p.tracks.href));
+    });
+     
+
+    // create submit button click event listener
+    DOMInputs.generate.addEventListener('click', async (e) => {
+        // prevent page reset
+        e.preventDefault();
+        // clear tracks
+        UICtrl.resetTracks();
+        //get the token
+        var token = UICtrl.getStoredToken().token;        
+        // get the playlist field
+        var playlistSelect = UICtrl.inputField().playlist;
+        // get track endpoint based on the selected playlist
+        var tracksEndPoint = playlistSelect.options[playlistSelect.selectedIndex].value;
+        // get the list of tracks
+        var tracks = await APICtrl.getTracks(token, tracksEndPoint);
+        // create a track list item
+        tracks.forEach(el => UICtrl.createTrack(el.track.href, el.track.name))
+        
+    });
+
+    // create song selection click event listener
+    DOMInputs.tracks.addEventListener('click', async (e) => {
+        // prevent page reset
+        e.preventDefault();
+        UICtrl.resetTrackDetail();
+        // get the token
+        var token = UICtrl.getStoredToken().token;
+        // get the track endpoint
+        var trackEndpoint = e.target.id;
+        //get the track object
+        var track = await APICtrl.getTrack(token, trackEndpoint);
+        // load the track details
+        UICtrl.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
+    });    
+
+    return {
+        init() {
+            console.log('App is starting');
+            loadGenres();
+        }
+    }
+
+})(UIController, APIController);
+
+// will need to call a method to load the genres on page load
+APPController.init();

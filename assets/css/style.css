@@ -8,6 +8,11 @@
     height: 100%;
 }
 
+.nav-wrapper{
+    background-color: #e57373;
+}
+
+/* hero start */
 .hero {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/hero-bg-1.jpeg");
     height: 50%;
@@ -46,4 +51,10 @@ span{
 .video-container {
     margin: 80px 80px 100px 80px;
 }
+/* hero end*/
 
+footer {
+    display: flex;
+    background-color: #e57373;
+    padding: 10px 0 0 0;
+}

@@ -21,8 +21,22 @@
 }
 
 .heading-1 {
-    padding: 90px;
+    padding: 90px 0 0 0;
     color: white;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 35px 0 35px 0;
+    color: white;
+}
+
+span{ 
+    color:white;
+}
+.input-field {
+    display: flex;
 }
 
 .waves-effect {

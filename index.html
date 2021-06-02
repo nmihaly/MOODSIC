@@ -2,14 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moodsic</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
     <link rel="stylesheet" href="./assets/css/style.css" />
+
+    <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+           $('select').material_select();
+        });
+     </script>
+
 </head>
 <body>
-
+    
     <nav>
         <div class="nav-wrapper">
         <a href="#" class="brand-logo">MOODSIC</a>
@@ -19,8 +31,10 @@
         </div>
     </nav>
 
-    <!--Hero Section-->
-    <section class="center hero">
+    <!--hero section-->
+
+    <section class="hero center">   
+        
         <div class="row heading-1">
             <h2 >
                 Search for New Music
@@ -28,205 +42,56 @@
             <p>Get random song suggestions based on mood or genre</p>
         </div>
 
-        <form class="radio-group">
-            <p>
-                <label>
-                  <input class="with-gap" name="group3" type="radio" checked />
-                  <span>Mood</span>
-                </label>
-            </p>
-            <p>
-                <label>
-                  <input class="with-gap" name="group3" type="radio" checked />
-                  <span>Genre</span>
-                </label>
-            </p>
-        </form>
+        <div class = "row">
+            <form class = "col s12">
+                <input type="hidden" id='hidden_token'>
+                <div class="col-sm-6 form-group row px-0">
+                    <label for="Genre" class="form-label col-sm-2 white-text">Genre:</label>
+                    <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
+                        <option value = "" disabled selected>Select</option>
+                        <option value = "1">option1</option>
+                        <option value = "2">option2</option>
+                        <option value = "3">option3</option>                 
+                    </select>
+                </div>
 
-       
-        <div class="row input-field">
-            <select id="suggestion-genres" name="suggestion-genres" class="select-type">
-                <!--option value="" disabled selected>Choose your option</option !-->
-                <option value="1">Option 1</option>
-                <option value="2">Option 2</option>
-                <option value="3">Option 3</option>
-            </select>
-            <label>Materialize Select</label>
-        </div>
+                <div class="col-sm-6 form-group row px-0">
+                    <label for="Genre" class="form-label col-sm-2 white-text">Playlists:</label>
+                    <select name="" id="select_playlist" class="form-control form-control-sm col-sm-10">
+                        <option value = "" disabled selected>Select</option>
+                        <option value = "1">option1</option>
+                        <option value = "2">option2</option>
+                        <option value = "3">option3</option>                    
+                    </select>
+                </div>                  
 
-        <div class="row">
-            <a class="waves-effect waves-light btn-small hoverable"><i class="material-icons right"></i>Generate</a>   
-        </div>
-
+            <div class="col-sm-6 row form-group px-0">
+                <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Search</button>
+            </div>          
+        </form>  
     </section>
 
-    <!--Random Video Container-->
-    <div class="video-container">
-        <iframe class="youtube-video" id="features-video" width="700" height="480" src="//www.youtube.com/embed/Q8TXgCzxEnw?rel=0" frameborder="0" allowfullscreen></iframe>
-    </div>
-
-    <!--primary container -->
-    <section id="primary" class="container suggested-mood">
-        <!--::before == $0-->
+    <section class="container suggested-mood">
         <article class="flex-row">
-            <h4>Generated Suggestions</h4>
-
-            <div id="results">
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="1">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <!--create new h3 element in js and append to html-->
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
+            <h4 class="center-align">Generated Suggestions</h4>         
+            <div class="row">
+                <div class="col-sm-6 px-0">
+                    <div class="list-group song-list">
+                        
+                    </div>                                             
                 </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="2">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
+                <div class="offset-md-1 col-sm-4" id="song-detail">                
                 </div>
+            </div> 
+    </section>   
 
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="3">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="4">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="5">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="6">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="7">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="8">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="9">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="all-suggestions">
-                    <div class="track-item" data-song-id="" data-song-name="" data-track-index="10">
-                        <div class="song-info" data-song-id="" data-song-name="">
-                            <img data-song-id="" data-song-name="" src="">
-                            <span class="song-info-text" data-song-id="" data-song-name="">
-                                <h3 class="song-name" data-song-id="" data-song-name=""></h3>
-                                <div class="artisti-name" data-song-id="" data-song-name="">
-                                    <p class="ng-binding"></p>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </section>
-
-    <!-- footer -->
     <footer>
-        <div class="row">
-            <p class="white-text">❤️ Made with love by AEN.</p>
-            <p class="center-align white-text">
-            &copy; 2021 A.E.N.
-            </p>
-        </div>
+        <p class="center-align white-text">❤️ Made with love by AEN.</p>
+        <p class="center-align white-text">
+        &copy; 2021 A.E.N.
+        </p>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="./assets/js/style.js"></script>
+
 </body>
 </html>

@@ -16,8 +16,8 @@
 .hero {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/hero-bg-1.jpeg");
     height: 50%;
+    width: 100%;
     background-position: center;
-    background-repeat: no-repeat;
     background-size: cover;
     position: relative;
     padding: 0 50px 50px 50px;
@@ -30,27 +30,11 @@
     color: white;
 }
 
-.radio-group {
-    display: flex;
-    justify-content: space-evenly;
-    padding: 35px 0 35px 0;
-    color: white;
+.form-label {
+    font-size: 20px;
 }
 
-span{ 
-    color:white;
-}
-.input-field {
-    display: flex;
-}
 
-.waves-effect {
-    margin-bottom: 90px;
-}
-
-.video-container {
-    margin: 80px 80px 100px 80px;
-}
 /* hero end*/
 
 footer {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moodsic</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link rel="stylesheet" type="text/css" href="main.css">
+
     <link rel="stylesheet" href="./assets/css/style.css" />
 
     <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -14,9 +14,13 @@
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
 
     <script>
+        // genre or playlist select option
         $(document).ready(function() {
            $('select').material_select();
         });
+        //add button
+      
+        // save add selection to local storage in playlist 1,2,3
      </script>
 
 </head>
@@ -25,9 +29,6 @@
     <nav>
         <div class="nav-wrapper">
         <a href="#" class="brand-logo">MOODSIC</a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="sass.html">Sass</a></li>
-        </ul>
         </div>
     </nav>
 
@@ -49,9 +50,18 @@
                     <label for="Genre" class="form-label col-sm-2 white-text">Genre:</label>
                     <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
                         <option value = "" disabled selected>Select</option>
-                        <option value = "1">option1</option>
-                        <option value = "2">option2</option>
-                        <option value = "3">option3</option>                 
+                        <option value = "1">Alternative</option>
+                        <option value = "2">Blues</option>
+                        <option value = "3">Classical</option> 
+                        <option value = "1">EDM</option>
+                        <option value = "2">HipHop</option>
+                        <option value = "3">Indie</option> 
+                        <option value = "1">Lo-Fi</option>
+                        <option value = "2">New Age</option>
+                        <option value = "3">Pop</option> 
+                        <option value = "1">Reggae</option>
+                        <option value = "2">Soft-rock</option>
+                        <option value = "3">Workout</option>                 
                     </select>
                 </div>
 
@@ -59,9 +69,9 @@
                     <label for="Genre" class="form-label col-sm-2 white-text">Playlists:</label>
                     <select name="" id="select_playlist" class="form-control form-control-sm col-sm-10">
                         <option value = "" disabled selected>Select</option>
-                        <option value = "1">option1</option>
-                        <option value = "2">option2</option>
-                        <option value = "3">option3</option>                    
+                        <option value = "1">Playlist 1</option>
+                        <option value = "2">Playlist 2</option>
+                        <option value = "3">Playlist 3</option>                    
                     </select>
                 </div>                  
 
@@ -76,12 +86,9 @@
             <h4 class="center-align">Generated Suggestions</h4>         
             <div class="row">
                 <div class="col-sm-6 px-0">
-                    <div class="list-group song-list">
-                        
-                    </div>                                             
+                    <div class="list-group song-list"></div>                                             
                 </div>
-                <div class="offset-md-1 col-sm-4" id="song-detail">                
-                </div>
+                <div class="offset-md-1 col-sm-4" id="song-detail"></div>
             </div> 
     </section>   
 
@@ -91,7 +98,11 @@
         &copy; 2021 A.E.N.
         </p>
     </footer>
+    <script src="assets/js/style.js"></script>
 
 
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    
 </body>
 </html>

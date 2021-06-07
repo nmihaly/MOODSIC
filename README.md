@@ -15,8 +15,12 @@ So that I can ease the music selection process
 * Javascript
 * Materialize
 * JQuery
+* Youtube api
+
+![](./assets/images/Moodsic(1).gif)
 
 # Github Url
 https://github.com/nmihaly/MOODSIC.git
 
 # Deployed application
+https://nmihaly.github.io/MOODSIC/

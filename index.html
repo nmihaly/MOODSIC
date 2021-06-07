@@ -4,105 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moodsic</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
+   
     <link rel="stylesheet" href="./assets/css/style.css" />
-
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
     <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+    
+    
 
     <script>
         // genre or playlist select option
         $(document).ready(function() {
            $('select').material_select();
         });
-        //add button
-      
-        // save add selection to local storage in playlist 1,2,3
+       
      </script>
-
-</head>
-<body>
     
-    <nav>
+    </head>
+    <body>
+      <!--Nav Bar-->
+      <nav>
         <div class="nav-wrapper">
-        <a href="#" class="brand-logo">MOODSIC</a>
+          <a href="#" class="brand-logo">MOODSIC</a>
         </div>
-    </nav>
-
-    <!--hero section-->
-
-    <section class="hero center">   
-        
-        <div class="row heading-1">
-            <h2 >
-                Search for New Music
-            </h2>
-            <p>Get random song suggestions based on mood or genre</p>
-        </div>
-
-        <div class = "row">
-            <form class = "col s12">
-                <input type="hidden" id='hidden_token'>
-                <div class="col-sm-6 form-group row px-0">
-                    <label for="Genre" class="form-label col-sm-2 white-text">Genre:</label>
-                    <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
-                        <option value = "" disabled selected>Select</option>
-                        <option value = "1">Alternative</option>
-                        <option value = "2">Blues</option>
-                        <option value = "3">Classical</option> 
-                        <option value = "1">EDM</option>
-                        <option value = "2">HipHop</option>
-                        <option value = "3">Indie</option> 
-                        <option value = "1">Lo-Fi</option>
-                        <option value = "2">New Age</option>
-                        <option value = "3">Pop</option> 
-                        <option value = "1">Reggae</option>
-                        <option value = "2">Soft-rock</option>
-                        <option value = "3">Workout</option>                 
-                    </select>
-                </div>
-
-                <div class="col-sm-6 form-group row px-0">
-                    <label for="Genre" class="form-label col-sm-2 white-text">Playlists:</label>
-                    <select name="" id="select_playlist" class="form-control form-control-sm col-sm-10">
-                        <option value = "" disabled selected>Select</option>
-                        <option value = "1">Playlist 1</option>
-                        <option value = "2">Playlist 2</option>
-                        <option value = "3">Playlist 3</option>                    
-                    </select>
-                </div>                  
-
+      </nav>
+      <!--Hero-->
+  
+    <div class="hero center white-text">
+        <br>
+        <h2 class="center-align heading-1">
+            Search for New Music
+        </h2>
+        <br>
+        <p class="white-text">Get random song suggestions based on mood or genre</p>
+        <br>
+        <p class="hero-text white-text">search for genres or moods below</p>
+        <form class = "col s12" id="myForm" autocomplete="off">
+            <div class="form-group">
+              <input class="form-control" type="text" id="search" placeholder="Search for music" required>
+            </div>
+            
             <div class="col-sm-6 row form-group px-0">
-                <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Search</button>
-            </div>          
-        </form>  
+                <button id="btn" class="btn">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+  
+    <section class="suggestions">
+        <h3 class="center-align">Generated Suggestions</h3>
+        <table style="display: none;" id="table" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Artist Info</th>
+              <th></th>
+              <th>Visit Channel</th>
+            </tr>
+          </thead>
+          <tbody id="results">
+          </tbody>
+        </table>
+        <div id="pager">
+          <ul id="pagination" class="pagination-sm"></ul>
+      </div>
     </section>
-
-    <section class="container suggested-mood">
-        <article class="flex-row">
-            <h4 class="center-align">Generated Suggestions</h4>         
-            <div class="row">
-                <div class="col-sm-6 px-0">
-                    <div class="list-group song-list"></div>                                             
-                </div>
-                <div class="offset-md-1 col-sm-4" id="song-detail"></div>
-            </div> 
-    </section>   
-
+  
+  
     <footer>
-        <p class="center-align white-text">❤️ Made with love by AEN.</p>
-        <p class="center-align white-text">
-        &copy; 2021 A.E.N.
-        </p>
-    </footer>
-    <script src="assets/js/style.js"></script>
+      <p class="center-align white-text">❤️ Made with love by AEN.</p>
+      <p class="center-align white-text">
+      &copy; 2021 A.E.N.
+      </p>
+  </footer>
 
-
-   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    
 </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.4/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="./assets/js/jquery.twbsPagination.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+  <script src="./assets/js/style.js"></script>
 </html>

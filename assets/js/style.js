@@ -1,262 +1,121 @@
-const APIController = (function() {
-    
-    const clientId = 'c511eb80c41d495c9f0527d97325eec2';
-    const clientSecret = '3b1a67a4f7124682a165f66bd2916c87';
+$(document).ready(function () {
+    var $pagination = $("#pagination"),
+      totalRecords = 0,
+      records = [],
+      recPerPage = 0,
+      nextPageToken = "",
+      totalPages = 0;
+    var API_KEY = "";
+    var search = "";
+    var duration = "any";
+    var order = "relevance";
+    var beforedate = new Date().toISOString();
+    var afterdate = new Date().toISOString();
+    var maxResults=10
+  
 
-    // private methods
-    const _getToken = async () => {
-
-        const result = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/x-www-form-urlencoded', 
-                'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret)
-            },
-            body: 'grant_type=client_credentials'
-        });
-
-        const data = await result.json();
-        return data.access_token;
-    }
-    
-    const _getGenres = async (token) => {
-
-        const result = await fetch(`https://api.spotify.com/v1/recommendations/available-genre-seeds`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        const data = await result.json();
-        return data.categories.items;
-    }
-
-    const _getPlaylistByGenre = async (token, genreId) => {
-
-        const limit = 10;
-        
-        const result = await fetch(`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        const data = await result.json();
-        return data.playlists.items;
-    }
-
-    const _getTracks = async (token, tracksEndPoint) => {
-
-        const limit = 10;
-
-        const result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        const data = await result.json();
-        return data.items;
-    }
-
-    const _getTrack = async (token, trackEndPoint) => {
-
-        const result = await fetch(`${trackEndPoint}`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        const data = await result.json();
-        return data;
-    }
-
-    return {
-        getToken() {
-            return _getToken();
+  
+    $("#myForm").submit(function (e) {
+      e.preventDefault();
+  
+      search = $("#search").val();
+  
+      //beforedate = new Date($("#beforedate").val()).toISOString();
+  
+      //afterdate = new Date($("#beforedate").val()).toISOString();
+  
+      console.log(beforedate);
+  
+      API_KEY = "AIzaSyAXgh6gqgi5XRxopF7_BKH0qEYTFd1iJ4E";
+  
+      var url = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}
+          &part=snippet&q=${search}&maxResults=${maxResults}&publishedAfter=${afterdate}&publishedBefore=${beforedate}&order=${order}&videoDuration=${duration}&type=video`;
+  
+      $.ajax({
+        method: "GET",
+        url: url,
+        beforeSend: function () {
+          $("#btn").attr("disabled", true);
+          $("#results").empty();
         },
-        getGenres(token) {
-            return _getGenres(token);
+        success: function (data) {
+          console.log(data);
+          $("#btn").attr("disabled", false);
+          displayVideos(data);
         },
-        getPlaylistByGenre(token, genreId) {
-            return _getPlaylistByGenre(token, genreId);
-        },
-        getTracks(token, tracksEndPoint) {
-            return _getTracks(token, tracksEndPoint);
-        },
-        getTrack(token, trackEndPoint) {
-            return _getTrack(token, trackEndPoint);
-        }
-    }
-})();
-
-
-// UI Module
-const UIController = (function() {
-
-    //object to hold references to html selectors
-    const DOMElements = {
-        selectGenre: '#select_genre',
-        selectPlaylist: '#select_playlist',
-        buttonSubmit: '#btn_submit',
-        divSongDetail: '#song-detail',
-        hfToken: '#hidden_token',
-        divSonglist: '.song-list'
-    }
-
-    //public methods
-    return {
-
-        //method to get input fields
-        inputField() {
-            return {
-                genre: document.querySelector(DOMElements.selectGenre),
-                playlist: document.querySelector(DOMElements.selectPlaylist),
-                tracks: document.querySelector(DOMElements.divSonglist),
-                submit: document.querySelector(DOMElements.buttonSubmit),
-                songDetail: document.querySelector(DOMElements.divSongDetail)
-            }
-        },
-
-        // need methods to create select list option
-        createGenre(text, value) {
-            const html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
-        }, 
-
-        createPlaylist(text, value) {
-            const html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
-        },
-
-        // need method to create a track list group item 
-        createTrack(id, name) {
-            const html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
-            document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
-        },
-
-        // need method to create the song detail
-        createTrackDetail(img, title, artist) {
-
-            const detailDiv = document.querySelector(DOMElements.divSongDetail);
-            // any time user clicks a new song, we need to clear out the song detail div
-            detailDiv.innerHTML = '';
-
-            const html = 
-            `
-            <div class="row col-sm-12 px-0">
-                <img src="${img}" alt="">        
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="Genre" class="form-label col-sm-12">${title}:</label>
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="artist" class="form-label col-sm-12">By ${artist}:</label>
-            </div> 
-            `;
-
-            detailDiv.insertAdjacentHTML('beforeend', html)
-        },
-
-        resetTrackDetail() {
-            this.inputField().songDetail.innerHTML = '';
-        },
-
-        resetTracks() {
-            this.inputField().tracks.innerHTML = '';
-            this.resetTrackDetail();
-        },
-
-        resetPlaylist() {
-            this.inputField().playlist.innerHTML = '';
-            this.resetTracks();
-        },
-        
-        storeToken(value) {
-            document.querySelector(DOMElements.hfToken).value = value;
-        },
-
-        getStoredToken() {
-            return {
-                token: document.querySelector(DOMElements.hfToken).value
-            }
-        }
-    }
-
-})();
-
-const APPController = (function(UICtrl, APICtrl) {
-
-    // get input field object ref
-    const DOMInputs = UICtrl.inputField();
-
-    // get genres on page load
-    const loadGenres = async () => {
-        //get the token
-        const token = await APICtrl.getToken();           
-        //store the token onto the page
-        UICtrl.storeToken(token);
-        //get the genres
-        const genres = await APICtrl.getGenres(token);
-        //populate our genres select element
-        genres.forEach(element => UICtrl.createGenre(element.name, element.id));
-    }
-
-    // create genre change event listener
-    DOMInputs.genre.addEventListener('change', async () => {
-        //reset the playlist
-        UICtrl.resetPlaylist();
-        //get the token that's stored on the page
-        const token = UICtrl.getStoredToken().token;        
-        // get the genre select field
-        const genreSelect = UICtrl.inputField().genre;       
-        // get the genre id associated with the selected genre
-        const genreId = genreSelect.options[genreSelect.selectedIndex].value;             
-        // ge the playlist based on a genre
-        const playlist = await APICtrl.getPlaylistByGenre(token, genreId);       
-        // create a playlist list item for every playlist returned
-        playlist.forEach(p => UICtrl.createPlaylist(p.name, p.tracks.href));
+      });
     });
-     
-
-    // create submit button click event listener
-    DOMInputs.submit.addEventListener('click', async (e) => {
-        // prevent page reset
-        e.preventDefault();
-        // clear tracks
-        UICtrl.resetTracks();
-        //get the token
-        const token = UICtrl.getStoredToken().token;        
-        // get the playlist field
-        const playlistSelect = UICtrl.inputField().playlist;
-        // get track endpoint based on the selected playlist
-        const tracksEndPoint = playlistSelect.options[playlistSelect.selectedIndex].value;
-        // get the list of tracks
-        const tracks = await APICtrl.getTracks(token, tracksEndPoint);
-        // create a track list item
-        tracks.forEach(el => UICtrl.createTrack(el.track.href, el.track.name))
-        
-    });
-
-    // create song selection click event listener
-    DOMInputs.tracks.addEventListener('click', async (e) => {
-        // prevent page reset
-        e.preventDefault();
-        UICtrl.resetTrackDetail();
-        // get the token
-        const token = UICtrl.getStoredToken().token;
-        // get the track endpoint
-        const trackEndpoint = e.target.id;
-        //get the track object
-        const track = await APICtrl.getTrack(token, trackEndpoint);
-        // load the track details
-        UICtrl.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
-    });    
-
-    return {
-        init() {
-            console.log('App is starting');
-            loadGenres();
-        }
+  
+    function apply_pagination() {
+      $pagination.twbsPagination({
+        totalPages: totalPages,
+        visiblePages: 6,
+        onPageClick: function (event, page) {
+          console.log(event);
+          displayRecordsIndex = Math.max(page - 1, 0) * recPerPage;
+          endRec = displayRecordsIndex + recPerPage;
+          console.log(displayRecordsIndex + "ssssssssss" + endRec);
+          displayRecords = records.slice(displayRecordsIndex, endRec);
+          generateRecords(recPerPage, nextPageToken);
+        },
+      });
     }
-
-})(UIController, APIController);
-
-// will need to call a method to load the genres on page load
-APPController.init();
+  
+    $("#search").change(function () {
+      search = $("#search").val();
+    });
+  
+    function generateRecords(recPerPage, nextPageToken) {
+      var url2 = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}
+      &part=snippet&q=${search}&maxResults=${maxResults}&pageToken=${nextPageToken}&publishedBefore=${beforedate}&publishedAfter=${afterdate}&order=${order}&videoDuration=${duration}&type=video`;
+  
+      $.ajax({
+        method: "GET",
+        url: url2,
+        beforeSend: function () {
+          $("#btn").attr("disabled", true);
+          $("#results").empty();
+        },
+        success: function (data) {
+          console.log(data);
+          $("#btn").attr("disabled", false);
+          displayVideos(data);
+        },
+      });
+    }
+  
+    function displayVideos(data) {
+      recPerPage = data.pageInfo.resultsPerPage;
+      nextPageToken = data.nextPageToken;
+      console.log(records);
+      totalRecords = data.pageInfo.totalResults;
+      totalPages = Math.ceil(totalRecords / recPerPage);
+      apply_pagination();
+      $("#search").val("");
+  
+      var videoData = "";
+  
+      $("#table").show();
+  
+      data.items.forEach((item) => {
+        videoData = `
+                      
+                      <tr>
+                      <td>
+                      <a target="_blank" href="https://www.youtube.com/watch?v=${item.id.videoId}">
+                      ${item.snippet.title}</td>
+                      <td>
+                      <img width="200" height="200" src="${item.snippet.thumbnails.high.url}"/>
+                      </td>
+                      <td>
+                      <a target="_blank" href="https://www.youtube.com/channel/${item.snippet.channelId}">${item.snippet.channelTitle}</a>
+                      </td>
+                      </tr>
+  
+                      `;
+  
+        $("#results").append(videoData);
+      });
+    }
+  });
+  

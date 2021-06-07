@@ -1,263 +1,195 @@
-var APIController = (function() {
-    
-    var clientId = '1ce2babdd7f44a1d86098faf54333881';
-    var clientSecret = 'd5613cd75a52445db1f1fc900e62bf73';
-    //var redirectUri: 'http://localhost/8888/callback'
+    //var clientId = '1ce2babdd7f44a1d86098faf54333881';
+    //var clientSecret = 'd5613cd75a52445db1f1fc900e62bf73';
+    //var redirectUri: 'https://nmihaly.github.io/MOODSIC/'
 
-    // private methods
-    var _getToken = async () => {
+ // Class representing the API
+ 
+var SpotifyWebApi = (function () {
+  var _baseUri = 'https://api.spotify.com/v1';
+  var _accessToken = null;
+  var _promiseImplementation = null;
 
-        var result = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/x-www-form-urlencoded', 
-                'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret)
-            },
-            body: 'grant_type=client_credentials'
-        });
+  var WrapPromiseWithAbort = function (promise, onAbort) {
+    promise.abort = onAbort;
+    return promise;
+  };
 
-        var data = await result.json();
-        return data.access_token;
-    }
-    
-    var _getGenres = async (token) => {
-
-        var result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        var data = await result.json();
-        return data.categories.items;
-    }
-
-    var _getPlaylistByGenre = async (token, genreId) => {
-
-        var limit = 3;
-        
-        var result = await fetch(`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        var data = await result.json();
-        return data.playlists.items;
-    }
-
-    var _getTracks = async (token, tracksEndPoint) => {
-
-        var limit = 3;
-
-        var result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        var data = await result.json();
-        return data.items;
-    }
-
-    var _getTrack = async (token, trackEndPoint) => {
-
-        var result = await fetch(`${trackEndPoint}`, {
-            method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
-        });
-
-        var data = await result.json();
-        return data;
-    }
-
-    return {
-        getToken() {
-            return _getToken();
+  var _promiseProvider = function (promiseFunction, onAbort) {
+    var returnedPromise;
+    if (_promiseImplementation !== null) {
+      var deferred = _promiseImplementation.defer();
+      promiseFunction(
+        function (resolvedResult) {
+          deferred.resolve(resolvedResult);
         },
-        getGenres(token) {
-            return _getGenres(token);
-        },
-        getPlaylistByGenre(token, genreId) {
-            return _getPlaylistByGenre(token, genreId);
-        },
-        getTracks(token, tracksEndPoint) {
-            return _getTracks(token, tracksEndPoint);
-        },
-        getTrack(token, trackEndPoint) {
-            return _getTrack(token, trackEndPoint);
+        function (rejectedResult) {
+          deferred.reject(rejectedResult);
         }
-    }
-})();
-
-
-// UI Module
-var UIController = (function() {
-
-    //object to hold references to html selectors
-    var DOMElements = {
-        selectGenre: '#genre',
-        selectPlaylist: '#select_playlist',
-        buttonSubmit: '#generate',
-        divSongDetail: '#song-detail',
-        hfToken: '#hidden_token',
-        divSonglist: '.song-list'
+      );
+      returnedPromise = deferred.promise;
+    } else {
+      if (window.Promise) {
+        returnedPromise = new window.Promise(promiseFunction);
+      }
     }
 
-    //public methods
-    return {
+    if (returnedPromise) {
+      return new WrapPromiseWithAbort(returnedPromise, onAbort);
+    } else {
+      return null;
+    }
+  };
 
-        //method to get input fields
-        inputField() {
-            return {
-                genre: document.querySelector(DOMElements.selectGenre),
-                playlist: document.querySelector(DOMElements.selectPlaylist),
-                tracks: document.querySelector(DOMElements.divSonglist),
-                submit: document.querySelector(DOMElements.buttonSubmit),
-                songDetail: document.querySelector(DOMElements.divSongDetail)
-            }
-        },
-
-        // need methods to create select list option
-        createGenre(text, value) {
-            var html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
-        }, 
-
-        createPlaylist(text, value) {
-            var html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
-        },
-
-        // need method to create a track list group item 
-        createTrack(id, name) {
-            var html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
-            document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
-        },
-
-        // need method to create the song detail
-        createTrackDetail(img, title, artist) {
-
-            var detailDiv = document.querySelector(DOMElements.divSongDetail);
-            // any time user clicks a new song, we need to clear out the song detail div
-            detailDiv.innerHTML = '';
-
-            var html = 
-            `
-            <div class="row col-sm-12 px-0">
-                <img src="${img}" alt="">        
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="Genre" class="form-label col-sm-12">${title}:</label>
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="artist" class="form-label col-sm-12">By ${artist}:</label>
-            </div> 
-            `;
-
-            detailDiv.insertAdjacentHTML('beforeend', html)
-        },
-
-        resetTrackDetail() {
-            this.inputField().songDetail.innerHTML = '';
-        },
-
-        resetTracks() {
-            this.inputField().tracks.innerHTML = '';
-            this.resetTrackDetail();
-        },
-
-        resetPlaylist() {
-            this.inputField().playlist.innerHTML = '';
-            this.resetTracks();
-        },
-        
-        storeToken(value) {
-            document.querySelector(DOMElements.hfToken).value = value;
-        },
-
-        getStoredToken() {
-            return {
-                token: document.querySelector(DOMElements.hfToken).value
-            }
+  var _extend = function () {
+    var args = Array.prototype.slice.call(arguments);
+    var target = args[0];
+    var objects = args.slice(1);
+    target = target || {};
+    objects.forEach(function (object) {
+      for (var j in object) {
+        if (object.hasOwnProperty(j)) {
+          target[j] = object[j];
         }
-    }
-
-})();
-
-var APPController = (function(UICtrl, APICtrl) {
-
-    // get input field object ref
-    var DOMInputs = UICtrl.inputField();
-
-    // get genres on page load
-    var loadGenres = async () => {
-        //get the token
-        var token = await APICtrl.getToken();           
-        //store the token onto the page
-        UICtrl.storeToken(token);
-        //get the genres
-        var genres = await APICtrl.getGenres(token);
-        //populate our genres select element
-        genres.forEach(element => UICtrl.createGenre(element.name, element.id));
-    }
-
-    // create genre change event listener
-    DOMInputs.genre.addEventListener('change', async () => {
-        //reset the playlist
-        UICtrl.resetPlaylist();
-        //get the token that's stored on the page
-        var token = UICtrl.getStoredToken().token;        
-        // get the genre select field
-        var genreSelect = UICtrl.inputField().genre;       
-        // get the genre id associated with the selected genre
-        var genreId = genreSelect.options[genreSelect.selectedIndex].value;             
-        // ge the playlist based on a genre
-        var playlist = await APICtrl.getPlaylistByGenre(token, genreId);       
-        // create a playlist list item for every playlist returned
-        playlist.forEach(p => UICtrl.createPlaylist(p.name, p.tracks.href));
+      }
     });
-     
+    return target;
+  };
 
-    // create submit button click event listener
-    DOMInputs.generate.addEventListener('click', async (e) => {
-        // prevent page reset
-        e.preventDefault();
-        // clear tracks
-        UICtrl.resetTracks();
-        //get the token
-        var token = UICtrl.getStoredToken().token;        
-        // get the playlist field
-        var playlistSelect = UICtrl.inputField().playlist;
-        // get track endpoint based on the selected playlist
-        var tracksEndPoint = playlistSelect.options[playlistSelect.selectedIndex].value;
-        // get the list of tracks
-        var tracks = await APICtrl.getTracks(token, tracksEndPoint);
-        // create a track list item
-        tracks.forEach(el => UICtrl.createTrack(el.track.href, el.track.name))
-        
-    });
+  var _buildUrl = function (url, parameters) {
+    var qs = '';
+    for (var key in parameters) {
+      if (parameters.hasOwnProperty(key)) {
+        var value = parameters[key];
+        qs += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
+      }
+    }
+    if (qs.length > 0) {
+      // chop off last '&'
+      qs = qs.substring(0, qs.length - 1);
+      url = url + '?' + qs;
+    }
+    return url;
+  };
 
-    // create song selection click event listener
-    DOMInputs.tracks.addEventListener('click', async (e) => {
-        // prevent page reset
-        e.preventDefault();
-        UICtrl.resetTrackDetail();
-        // get the token
-        var token = UICtrl.getStoredToken().token;
-        // get the track endpoint
-        var trackEndpoint = e.target.id;
-        //get the track object
-        var track = await APICtrl.getTrack(token, trackEndpoint);
-        // load the track details
-        UICtrl.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
-    });    
+  var _performRequest = function (requestData, callback) {
+    var req = new XMLHttpRequest();
 
-    return {
-        init() {
-            console.log('App is starting');
-            loadGenres();
+    var promiseFunction = function (resolve, reject) {
+      function success(data) {
+        if (resolve) {
+          resolve(data);
         }
+        if (callback) {
+          callback(null, data);
+        }
+      }
+
+      function failure() {
+        if (reject) {
+          reject(req);
+        }
+        if (callback) {
+          callback(req, null);
+        }
+      }
+
+      var type = requestData.type || 'GET';
+      req.open(type, _buildUrl(requestData.url, requestData.params));
+      if (_accessToken) {
+        req.setRequestHeader('Authorization', 'Bearer ' + _accessToken);
+      }
+
+      req.onreadystatechange = function () {
+        if (req.readyState === 4) {
+          var data = null;
+          try {
+            data = req.responseText ? JSON.parse(req.responseText) : '';
+          } catch (e) {
+            console.error(e);
+          }
+
+          if (req.status >= 200 && req.status < 300) {
+            success(data);
+          } else {
+            failure();
+          }
+        }
+      };
+
+      if (type === 'GET') {
+        req.send(null);
+      } else {
+        var postData = null;
+        if (requestData.postData) {
+          if (requestData.contentType === 'image/jpeg') {
+            postData = requestData.postData;
+            req.setRequestHeader('Content-Type', requestData.contentType);
+          } else {
+            postData = JSON.stringify(requestData.postData);
+            req.setRequestHeader('Content-Type', 'application/json');
+          }
+        }
+        req.send(postData);
+      }
+    };
+
+    if (callback) {
+      promiseFunction();
+      return null;
+    } else {
+      return _promiseProvider(promiseFunction, function () {
+        req.abort();
+      });
+    }
+  };
+
+  var _checkParamsAndPerformRequest = function (
+    requestData,
+    options,
+    callback,
+    optionsAlwaysExtendParams
+  ) {
+    var opt = {};
+    var cb = null;
+
+    if (typeof options === 'object') {
+      opt = options;
+      cb = callback;
+    } else if (typeof options === 'function') {
+      cb = options;
     }
 
-})(UIController, APIController);
+    // options extend postData, if any. Otherwise they extend parameters sent in the url
+    var type = requestData.type || 'GET';
+    if (type !== 'GET' && requestData.postData && !optionsAlwaysExtendParams) {
+      requestData.postData = _extend(requestData.postData, opt);
+    } else {
+      requestData.params = _extend(requestData.params, opt);
+    }
+    return _performRequest(requestData, cb);
+  };
 
-// will need to call a method to load the genres on page load
-APPController.init();
+  /**
+   * Creates an instance of the wrapper
+   * @constructor
+   */
+  var Constr = function () {};
+
+  Constr.prototype = {
+    constructor: SpotifyWebApi
+  };
+
+  /**
+   * Fetches a resource through a generic GET request.
+   *
+   * @param {string} url The URL to be fetched
+   * @param {function(Object,Object)} callback An optional callback
+   * @return {Object} Null if a callback is provided, a `Promise` object otherwise
+   */
+  Constr.prototype.getGeneric = function (url, callback) {
+    var requestData = {
+      url: url
+    };
+    return _checkParamsAndPerformRequest(requestData, callback);
+  };
+});

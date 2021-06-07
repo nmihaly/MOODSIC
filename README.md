@@ -17,7 +17,7 @@ So that I can ease the music selection process
 * JQuery
 * Youtube api
 
-![](./assets/images/Moodsic(1).gif)
+![](./assets/images/moodsic.gif)
 
 # Github Url
 https://github.com/nmihaly/MOODSIC.git

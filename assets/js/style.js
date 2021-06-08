@@ -20,7 +20,7 @@ $(document).ready(function () {
   
       search = $("#search").val();    
   
-      console.log(beforedate);
+      console.log(search);
   
       API_KEY = "AIzaSyAXgh6gqgi5XRxopF7_BKH0qEYTFd1iJ4E";
   
@@ -40,9 +40,12 @@ $(document).ready(function () {
           displayVideos(data);
         },
       });
+      saveSearch();
     });
 
-  
+    var saveSearch = function() {
+      localStorage.setItem("search", JSON.stringify(search));
+    };
   
     function apply_pagination() {
       $pagination.twbsPagination({

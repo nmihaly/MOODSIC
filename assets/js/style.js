@@ -18,11 +18,7 @@ $(document).ready(function () {
     $("#myForm").submit(function (e) {
       e.preventDefault();
   
-      search = $("#search").val();
-  
-      //beforedate = new Date($("#beforedate").val()).toISOString();
-  
-      //afterdate = new Date($("#beforedate").val()).toISOString();
+      search = $("#search").val();    
   
       console.log(beforedate);
   
@@ -42,9 +38,14 @@ $(document).ready(function () {
           console.log(data);
           $("#btn").attr("disabled", false);
           displayVideos(data);
+
+        localStorage.setItem("search", search);
+          renderLastRegistered();
         },
       });
     });
+
+  
   
     function apply_pagination() {
       $pagination.twbsPagination({

@@ -38,9 +38,6 @@ $(document).ready(function () {
           console.log(data);
           $("#btn").attr("disabled", false);
           displayVideos(data);
-
-        localStorage.setItem("search", search);
-          renderLastRegistered();
         },
       });
     });
